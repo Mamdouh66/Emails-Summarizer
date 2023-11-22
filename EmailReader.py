@@ -50,18 +50,7 @@ def set_connection() -> Any:
     return build("gmail", "v1", credentials=creds)
 
 
-def get_unread_emails(service, max_results: int = 5) -> list[Any]:
-    """
-    Get unread emails from gmail API,
-
-    Args:
-        service: gmail API service
-        max_results: maximum number of emails to get (default: 5)
-
-    Returns:
-        messages: list of unread emails
-    """
-
+def get_unread_emails(service: Any, max_results: int = 5) -> list[dict[str, Any]]:
     query = "is:unread is:inbox"
     response = (
         service.users()
@@ -76,16 +65,6 @@ def get_unread_emails(service, max_results: int = 5) -> list[Any]:
 
 
 def remove_hyperlinks(text: str) -> str:
-    """
-    Remove hyperlinks from text
-
-    Args:
-        text: text to remove hyperlinks from
-
-    Returns:
-        text: text without hyperlinks
-    """
-
     # Remove URLs starting with http/https
     text = re.sub(r"http\S+", "", text)
 
@@ -97,7 +76,7 @@ def remove_hyperlinks(text: str) -> str:
     return text
 
 
-def process_headers(headers):
+def process_headers(headers: list[dict[str, str]]) -> dict[str, str]:
     email_data = {}
     for header in headers:
         name = header["name"]
@@ -107,7 +86,7 @@ def process_headers(headers):
     return email_data
 
 
-def decode_body(data):
+def decode_body(data: str) -> str:
     text = base64.urlsafe_b64decode(data.encode("UTF-8")).decode("UTF-8")
     soup = BeautifulSoup(text, "html.parser")
     clean_text = soup.get_text()
@@ -115,11 +94,10 @@ def decode_body(data):
     return clean_text
 
 
-def get_parts(parts):
+def get_parts(parts: list[dict[str, Any]] | None) -> list[str]:
     data = []
     if parts:
         for part in parts:
-            mimeType = part.get("mimeType")
             body = part.get("body")
             data_part = body.get("data")
             if part.get("parts"):
@@ -130,7 +108,7 @@ def get_parts(parts):
     return data
 
 
-def get_email_data(service, message_id: int) -> dict[str, str]:
+def get_email_data(service: Any, message_id: int) -> dict[str, str]:
     msg = (
         service.users()
         .messages()
@@ -150,7 +128,7 @@ def get_email_data(service, message_id: int) -> dict[str, str]:
     return email_data
 
 
-def mark_as_read_and_archive(service, message_id):
+def mark_as_read_and_archive(service: Any, message_id: int) -> None:
     service.users().messages().modify(
         userId="me", id=message_id, body={"removeLabelIds": ["UNREAD", "INBOX"]}
     ).execute()
