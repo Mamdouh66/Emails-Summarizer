@@ -14,8 +14,7 @@ def main(max_result: int, tts: int, read_and_archive):
     try:
         service = set_connection()
     except Exception as e:
-        print("error in connection...")
-        print(e)
+        print("error in connection...\n\n", e)
         exit()
 
     unread_emails: list[Any] = get_unread_emails(service, max_result)
