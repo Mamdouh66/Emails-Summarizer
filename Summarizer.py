@@ -37,6 +37,7 @@ def summarize(text):
         {"role": "user", "content": text},
     ]
 
+    response = None
     try:
         print("Calling OpenAI GPT API...")
         response = client.chat.completions.create(

@@ -40,16 +40,12 @@ def main(max_result: int, tts: int, read_and_archive):
                 """
             )
 
-    summaries: list[str] = []
-    for email in all_emails:
-        summary = summarize(email)
-        if tts:
-            text_to_speech(summary)
-        summaries.append(summary)
+    summary: str = summarize(" ".join(all_emails))
+    print(summary)
 
-    print(summaries)
-    for i, summary in enumerate(summaries):
-        print(f"{i+1} Summary:\n {summary} ")
+    if tts:
+        text_to_speech(summary)
+        print("text to speech has been uploaded to dump")
 
 
 if __name__ == "__main__":
